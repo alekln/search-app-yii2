@@ -15,6 +15,7 @@ use kartik\bs4dropdown\Dropdown;
 $this->title = 'Employee';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="user-index p-4">
 
     <?php
@@ -22,7 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
     $filterFormName = 'users-form';
     timurmelnikov\widgets\LoadingOverlayPjax::begin([
         'id' => $pjaxContainerId,
-
         'color' => 'rgba(63, 127, 191, 0.4) ',
         'fontawesome' => 'fa fa-spinner fa-spin',
         'minSize' => "20px",
@@ -45,7 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="">
         <?php
-
         $this->registerJs('
             $("select#employeequery-institution_mode").change(function(){
                 let value = this.value;
@@ -186,14 +185,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                 echo Html::button($model->address_query, [
                                     'id' => 'dropdownMenuButton',
                                     'class' => 'btn btn-default dropdown-toggle',
-                                    'style'=>'width:400px; text-overflow: ellipsis; overflow:hidden;',
+                                    'style'=>'width:400px; text-overflow: ellipsis; overflow:hidden;text-align:left;',
                                     'data-toggle' => 'dropdown',
                                     'aria-haspopup' => 'true',
                                     'aria-expanded' => 'false'
                                 ]);
 
                                 $ddItems = [];
-                                $ddItems[] = ['linkOptions'=>['data-region'=>0, 'style'=>'display:inline-block; height:30px;'], 'label' => '', 'url'=>'javascript:void(0)'];
+                                $ddItems[] = ['linkOptions'=>[
+                                        'data-region'=>0,
+                                        'style'=>'display:inline-block; height:30px;',
+                                        'data-fullname'=>''
+                                ], 'label' => '', 'url'=>'javascript:void(0)'];
                                 foreach(\common\models\AddressRegion::find()->asArray()->all() as $region){
 
                                     $item = [

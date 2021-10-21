@@ -39,16 +39,15 @@ $("document").ready(function() {
 
 function updateDropDownTrigger(el){
     // e.preventDefault();
-    console.log('test');
+
     $('.regionDDList').removeClass('show').hide();
 
     let r = $(el).attr('data-region'),
         p = $(el).attr('data-province'),
         m = $(el).attr('data-municipality'),
         fn = $(el).attr('data-fullname'),
-        $dd = $('#dropdownMenuButton');
-    $ddQuery = $('input#employeequery-address_query');
-    lbl = '';
+        $dd = $('#dropdownMenuButton'),
+        $ddQuery = $('input#employeequery-address_query');
 
     $('input#employeequery-address_region').val(r).trigger('change');
 
