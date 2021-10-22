@@ -64,16 +64,16 @@ INSTALLATION INSTRUCTIONS
 -------------------------
 
 1) create directory in your server under root html or htdocs 
-2) checkout package into this directory
+2) checkout or copy package into html or htdocs directory
 3) install composer following instructions https://getcomposer.org/download/ composer version 2.0
-4) after composer success installation, execute command "composer install"
+4) open command line and execute command "composer install"
 5) create MySql database "yii2appDb"
-  5.1) edit your application config file under /app/environments/dev/common/config/main-local.php. Replace your MySql user and password, and host if needed
-6) execute command "init" in root directory of the app
+  5.1) edit your application config located "/app/environments/dev/common/config/main-local.php". Replace your MySql user and password, and host if needed
+6) then open command line and execute command "init" in root directory of the app
   6.1) choose "development" as environment
   6.2) accept to overwrite all configs
-7) be shure that server configuration has mod_rewrite installed and enabled
-8) if you work on localhost you should create new virtual host
+7) be sure that server configuration has mod_rewrite installed and enabled
+8) if you work on local host you should create new virtual host
   8.1) Windows edit hosts C:\Windows\System32\drivers\etc file and add row "127.0.0.1 app.localhost"
   8.2) On apache config C:\Apache24\conf\extra\httpd-vhosts.conf add host configuration
 
@@ -88,6 +88,7 @@ INSTALLATION INSTRUCTIONS
 </VirtualHost>
  
 you need to replace all the configuration based on your local instance
+
 8.3) Restart apache and open http://app.localhost on your host
 9) once server opens http://app.localhost successfully, open http://app.localhost/requirements.php and check that all requirements for the framework proper work are full filled
 10) go to root catalog, open .htaccess and remove all the commented blocks under "<IfModule mod_rewrite.c>" section
