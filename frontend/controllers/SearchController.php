@@ -83,14 +83,16 @@ class SearchController extends Controller
         $searchModel = new EmployeeQuery();
 
         $queryParams = Yii::$app->request->getQueryParams();
-        $dataProvider = $searchModel->search($queryParams);
 
-        if (isset($queryParams['exportCSV'])) {
-            return $searchModel->exportCSV($queryParams);
-        }
+        array_walk_recursive($queryParams, function (&$val, $index) {
+            $val = trim($val);
+        });
+
+        $dataProvider = $searchModel->search($queryParams);
 
         return $this->render('index', ['model'=>$searchModel, 'dataProvider'=>$dataProvider]);
     }
+
     public function actionExportCsv()
     {
 

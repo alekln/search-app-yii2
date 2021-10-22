@@ -52,4 +52,15 @@ class Position extends \yii\db\ActiveRecord
     {
         return new \common\models\search\PositionQuery(get_called_class());
     }
+
+    /**
+     * Gets query for [[Qualification]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQualification()
+    {
+        return $this->hasOne(QualificationCategory::className(), ['id' => 'qualification_id'])
+            ->viaTable('employee_position', ['employee_id'=>'id']);
+    }
 }

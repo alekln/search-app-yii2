@@ -35,6 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
     $form = ActiveForm::begin([
             'action' => ['index'],
             'method' => 'get',
+            'enableClientValidation' => false,
+             'fieldConfig' => ['template' => "{label}\n{input}\n{hint}"],
             'options' => [
                 'id' => $filterFormName,
                 'data-pjax' => true,
@@ -42,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
 
     ?>
-
+    <?= $form->errorSummary($model); ?>
     <div class="">
         <?php
         $this->registerJs('
@@ -51,9 +53,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 $("#employeequery-institution_name").val("");
                 window.updateDropDown("' . Yii::$app->urlManager->createUrl('custom-data/institution-type') . '?mode="+value, $("select#employeequery-institution_type"), true)
             });
+            $("select#employeequery-position_type").change(function(){
+                let value = this.value;
+                $("#employeequery-position").val("");
+                window.updateDropDown("' . Yii::$app->urlManager->createUrl('custom-data/position') . '?mode="+value, $("select#employeequery-position"))
+            });
     
     
-            $("select#employeequery-institution_mode, input#employeequery-address_region, input#employeequery-address_province, input#employeequery-address_municipality, select#employeequery-institution_type, select#employeequery-position_type").on("change", function(){
+            $("select#employeequery-institution_mode, input#employeequery-address_region, input#employeequery-address_province, input#employeequery-address_municipality, select#employeequery-institution_type").on("change", function(){
                 $("#employeequery-institution_name").val("");
                 window.updateAutocomplete("' . Yii::$app->urlManager->createUrl('custom-data/institution') . '");
             });
@@ -61,116 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
         <div class="site-search">
 
-                <?= GridView::widget([
-                    'dataProvider' => $dataProvider,
-                    'pager' => [
-                        'options' => [
-                            'class' => 'pagination float-right'
-                        ],
-                        'prevPageLabel' => '←',
-                        'nextPageLabel' => '→'
-                    ],
-                    'layout' => "
-                            <div class='row'>
-                                <div class='col'>{pager}</div>
-                                <div class='col-5 text-right '></div>
-                            </div>
-                            <div class='row mt-5'>{items}</div>
-                            <div class='row'>
-                                <div class='col'>{pager}</div>
-                                <div class='col-5 text-right '>{summary}</div>
-                            </div>
-                    ",
-                    'options' => [
-                        'style'=>'word-wrap: break-word;'
-                    ],
-                    'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
-                        [
-                            'attribute' => 'employee.institution',
-                            'label'=>'Institution',
-                            'contentOptions' => ['style' => 'width: 120px'],
-                            'format' => "raw",
-                            'value' =>  function ($model) {
-                                foreach($model->institution as $inst){
-                                    return $inst !== null ? Html::a($inst->short_name, $inst->home_page, ['target'=>'_blank']) . '<br/>': '' ;
-                                }
-                            }
-                        ],
-                        [
-                            'attribute' => 'employee.education.name',
-                            'label'=>'Haridus',
-                            'contentOptions' => ['style' => 'width: 120px'],
-                            'format' => 'html',
-                            'value' =>  function ($model) {
-                                return $model->education->name;
-                            }
-                        ],
-                        [
-                            'attribute' => 'employee.position.name',
-                            'label'=>'Ametikoht',
-                            'contentOptions' => ['style' => 'width: 120px'],
-                            'format' => 'html',
-                            'value' =>  function ($model) {
 
-                                return $model->position !== null ? $model->position->name : '';
-                            }
-                        ],
-                        [
-                            'attribute' => 'employee.subjects',
-                            'label'=>'Õpetatavad õppeained',
-                            'contentOptions' => ['style' => 'width: 220px'],
-                            'format' => 'html',
-                            'value' =>  function ($model) {
-                                $subjects = '';
-                                foreach($model->subjects as $data){
-                                    $subjects .=  sprintf('<li>%s</li><br/>', $data->name);
-                                }
-                                if(!empty($subjects)) {
-                                    $subjects = sprintf('<ol>%s</ol>', $subjects);
-                                }
-
-                                return $subjects;
-                            }
-                        ],
-                        [
-                            'attribute' => 'employee.qualification.name',
-                            'label'=>'Kvalifikatsiooni kategooria',
-                            'format' => 'html',
-                            'value' =>  function ($model) {
-                                return $model->qualification->name;
-                            }
-                        ],
-                        [
-                            'attribute' => 'employee.qualification.name',
-                            'label'=>'Pedagoogiline nimetus',
-                            'format' => 'html',
-                            'value' =>  function ($model) {
-
-                                return $model->position !== null ? $model->position->pedagogical_name : '';
-                            }
-                        ], [
-                            'attribute' => 'employee.qualification.name',
-                            'label'=>'Pedagoogiline staaz',
-                            'format' => 'html',
-                            'contentOptions' => [
-                                'style'=>'max-width:100px; min-height:100px; overflow: auto; word-wrap: break-word;'
-                            ],
-                            'value' =>  function ($model) {
-                                return $model->getStandingPeriod();
-                            }
-                        ],
-                        [
-                            'attribute' => 'birth_date',
-                            'label'=>'Sünniaasta',
-                            'contentOptions' => ['style' => 'width: 120px'],
-                            'value' =>  function ($model) {
-                                return date("Y", strtotime($model->birth_date));
-                            }
-                        ],
-
-                    ],
-                ]); ?>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row  mb-2">
@@ -188,7 +86,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'style'=>'width:400px; text-overflow: ellipsis; overflow:hidden;text-align:left;',
                                     'data-toggle' => 'dropdown',
                                     'aria-haspopup' => 'true',
-                                    'aria-expanded' => 'false'
+                                    'aria-expanded' => 'false',
+                                    'autofocus' => true,
+
                                 ]);
 
                                 $ddItems = [];
@@ -254,14 +154,14 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= $form->field($model,
                                 'institution_mode')->dropDownList(ArrayHelper::map(\common\models\InstitutionCategory::find()->All(),
                                 'id',
-                                'name'), ['autofocus' => true, 'prompt' => '']); ?>
+                                'name'), ['prompt' => '']); ?>
                         </div>
                         <div class="col-lg">
                             <?= $form->field($model,
                                 'institution_type')->dropDownList(ArrayHelper::map(\common\models\InstitutionType::find()->All(),
                                 'id',
                                 'name'),
-                                ['autofocus' => true, 'prompt' => '']); ?>
+                                ['prompt' => '']); ?>
                         </div>
                         <div class="col-lg">
                             <?= $form->field($model, 'institution_name')->textInput(['list'=>'institutionList']); ?>
@@ -296,7 +196,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                     <?= $form->field($model, 'gender')->dropdownList([\common\models\Employee::GENDER_MEN => 'Mees', \common\models\Employee::GENDER_WOMAN => 'Naine'],
-                        ['autofocus' => true, 'multiple' => 'multiple']); ?>
+                        [ 'multiple' => 'multiple']); ?>
 
 
                     <div class="row">
@@ -304,19 +204,26 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= $form->field($model,
                                 'position_type')->dropDownList(ArrayHelper::map(\common\models\PositionType::find()->All(),
                                 'id',
-                                'name'), ['autofocus' => true, 'prompt' => '']) ?>
+                                'name'), [ 'prompt' => '']) ?>
                         </div>
                         <div class="col-lg">
-                            <?= $form->field($model, 'position')->dropDownList(ArrayHelper::map(\common\models\Position::find()->All(),
+                            <?php $positionsQuery = \common\models\Position::find();
+
+                            if(isset($_GET['EmployeeQuery']['position_type']) && !empty($_GET['EmployeeQuery']['position_type'])){
+                                $positionsQuery->where(['type'=>$_GET['EmployeeQuery']['position_type']]);
+                            }
+                            $positions = $positionsQuery->all();
+                            ?>
+                            <?= $form->field($model, 'position')->dropDownList(ArrayHelper::map($positions,
                                 'id',
                                 'name'),
-                                ['autofocus' => true, 'multiple' => 'multiple']) ?>
+                                [ 'multiple' => 'multiple']) ?>
                         </div>
                     </div>
                     <?= $form->field($model,
                         'education_level')->dropDownList(ArrayHelper::map(\common\models\EducationType::find()->All(), 'id',
-                        'name'), ['autofocus' => true, 'multiple' => 'multiple']) ?>
-                    <?= $form->field($model, 'fired_search')->dropdownList(["no"=>'Ei', "yes"=>'Jah'], ['autofocus' => true]) ?>
+                        'name'), [ 'multiple' => 'multiple']) ?>
+                    <?= $form->field($model, 'fired_search')->dropdownList(["no"=>'Ei', "yes"=>'Jah'], ['prompt'=>'', 'autofocus' => true]) ?>
 
                     <div class="form-group">
                         <?= Html::submitButton('Otsi', ['class' => 'btn btn-primary', 'name' => 'search-button']) ?>
@@ -331,7 +238,139 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
         </div>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'pager' => [
+                'options' => [
+                    'class' => 'pagination float-right'
+                ],
+                'prevPageLabel' => '←',
+                'nextPageLabel' => '→'
+            ],
+            'layout' => "
+                            <div class='row'>
+                                <div class='col'>{pager}</div>
+                                <div class='col-5 text-right '>{summary}</div>
+                            </div>
+                            <div class='row mt-5'>{items}</div>
+                            <div class='row'>
+                                <div class='col'>{pager}</div>
+                                <div class='col-5 text-right '>{summary}</div>
+                            </div>
+                    ",
+            'summary' => "Showing {begin} - {end} of {totalCount} items",
+            'emptyText'=> "Showing 0 - 0 of 0 items",
+            'options' => [
+                'style'=>'word-wrap: break-word;'
+            ],
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'employee.institution',
+                    'label'=>'Institution',
+                    'contentOptions' => ['style' => 'width: 120px'],
+                    'format' => "raw",
+                    'value' =>  function ($model) {
+                        foreach($model->institution as $inst){
+                            return $inst !== null ? Html::a($inst->short_name, $inst->home_page, ['target'=>'_blank']) . '<br/>': '' ;
+                        }
+                    }
+                ],
+                [
+                    'attribute' => 'employee.education.name',
+                    'label'=>'Haridus',
+                    'contentOptions' => ['style' => 'width: 120px'],
+                    'format' => 'html',
+                    'value' =>  function ($model) {
+                        return $model->getLatestEducation();
+                    }
+                ],
+                [
+                    'attribute' => 'employee.position.name',
+                    'label'=>'Ametikoht',
+                    'contentOptions' => ['style' => 'width: 120px'],
+                    'format' => 'html',
+                    'value' =>  function ($model) {
+                        $relations = $model->employeePositions;
+                        $outputPositions = "";
+                        $coma = "";
+                        foreach($relations as $relation){
+                            $outputPositions .= $coma . $relation->position->name;
+                            $coma = ", ";
+                        }
+                        return $outputPositions;
 
+                    }
+                ],
+                [
+                    'attribute' => 'employee.subjects',
+                    'label'=>'Õpetatavad õppeained',
+                    'contentOptions' => ['style' => 'width: 220px'],
+                    'format' => 'html',
+                    'value' =>  function ($model) {
+                        $subjects = "";
+                        $coma = "";
+                        foreach($model->subjects as $data){
+                            $subjects .= $coma .  $data->name;
+                            $coma = ", ";
+                        }
+
+                        return $subjects;
+                    }
+                ],
+                [
+                    'attribute' => 'employee.qualification.name',
+                    'label'=>'Kvalifikatsiooni kategooria',
+                    'format' => 'html',
+                    'value' =>  function ($model) {
+                        $relations = $model->employeePositions;
+                        $outputPositions = "";
+                        $coma = "";
+                        foreach($relations as $relation){
+                            $outputPositions .= $coma  . $relation->position->name  . " - "  . $relation->qualification->name;
+                            $coma = ", ";
+                        }
+                        return $outputPositions;
+                    }
+                ],
+                [
+                    'attribute' => 'employee.qualification.name',
+                    'label'=>'Pedagoogiline nimetus',
+                    'format' => 'html',
+                    'value' =>  function ($model) {
+                        $relations = $model->employeePositions;
+                        $outputPositions = "";
+                        $coma = "";
+                        foreach($relations as $relation){
+                            $outputPositions .=  $coma . $relation->position->pedagogical_name;
+                            if(!empty($relation->position->pedagogical_name)) {
+                                $coma = ", ";
+                            }
+                        }
+                        return $outputPositions;
+                    }
+                ], [
+                    'attribute' => 'employee.qualification.name',
+                    'label'=>'Pedagoogiline staaz',
+                    'format' => 'html',
+                    'contentOptions' => [
+                        'style'=>'max-width:100px; min-height:100px; overflow: auto; word-wrap: break-word;'
+                    ],
+                    'value' =>  function ($model) {
+                        return $model->getStandingPeriod();
+                    }
+                ],
+                [
+                    'attribute' => 'birth_date',
+                    'label'=>'Sünniaasta',
+                    'contentOptions' => ['style' => 'width: 120px'],
+                    'value' =>  function ($model) {
+                        return date("Y", strtotime($model->birth_date));
+                    }
+                ],
+
+            ],
+        ]); ?>
     </div>
 
 

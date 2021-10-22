@@ -30,6 +30,9 @@ class EducationType extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getEmployeeEducation(){
+        return $this->hasMany(EmployeeEducation::class, ['education_id'=> 'id']);
+    }
     /**
      * {@inheritdoc}
      */

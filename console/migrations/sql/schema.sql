@@ -107,32 +107,47 @@ CREATE TABLE IF NOT EXISTS `employee` (
   `gender` int(1) DEFAULT NULL,
   `status` int(1) DEFAULT NULL,
   `address` text,
-  `education_id` int(11) DEFAULT NULL,
-  `position_id` int(11) DEFAULT NULL,
-  `qualification_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_employee_education_type` (`education_id`),
-  KEY `FK_employee_position` (`position_id`),
-  KEY `FK_employee_qualification_category` (`qualification_id`),
-  CONSTRAINT `FK_employee_education_type` FOREIGN KEY (`education_id`) REFERENCES `education_type` (`id`),
-  CONSTRAINT `FK_employee_position` FOREIGN KEY (`position_id`) REFERENCES `position` (`id`),
-  CONSTRAINT `FK_employee_qualification_category` FOREIGN KEY (`qualification_id`) REFERENCES `qualification_category` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- Dumping data for table yii2phpdb.employee: ~10 rows (approximately)
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT IGNORE INTO `employee` (`id`, `created_at`, `updated_at`, `employed_at`, `termination_at`, `first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, `status`, `address`, `education_id`, `position_id`, `qualification_id`) VALUES
-	(1, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-01-18', NULL, 'alek', 'levitan', 'nikolaevich', '1982-11-26', 1, 1, NULL, 5, 2, 1),
-	(2, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-09-19', '2021-10-20', 'aleksej', 'lavrentjev', 'alekseevich', '1983-10-24', 1, -1, NULL, 8, 3, 2),
-	(3, '2021-10-21 15:02:36', NULL, NULL, NULL, 'viktor', 'gjugo', 'nihtelshtain', '1980-10-21', 1, 1, NULL, 7, 1, 1),
-	(4, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Jelena', 'Kavroljuk', 'Antipovna', '1973-07-21', 2, 1, NULL, 9, 4, 2),
-	(5, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-01-18', NULL, 'alek', 'levitan', 'nikolaevich', '1982-11-26', 1, 1, NULL, 5, 2, 1),
-	(6, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-09-19', '2021-10-20', 'aleksej', 'lavrentjev', 'alekseevich', '1983-10-24', 1, -1, NULL, 8, 3, 2),
-	(7, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-09-19', '2021-10-20', 'aleksej', 'lavrentjev', 'alekseevich', '1983-10-24', 1, -1, NULL, 8, 3, 2),
-	(8, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Alina', 'Kavroljuk', 'Antipovna', '1973-07-21', 2, 1, NULL, 9, 4, 2),
-	(9, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Alina', 'Kavroljuk', 'Antipovna', '1973-07-21', 2, 1, NULL, 9, 4, 2),
-	(10, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Kalina', 'Kats', 'Antipenko', '1973-07-21', 2, 1, NULL, 9, 4, 2);
+INSERT IGNORE INTO `employee` (`id`, `created_at`, `updated_at`, `employed_at`, `termination_at`, `first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, `status`, `address`) VALUES
+	(1, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-01-18', NULL, 'alek', 'levitan', 'nikolaevich', '1982-11-26', 1, 1, NULL),
+	(2, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-09-19', '2021-10-20', 'aleksej', 'lavrentjev', 'alekseevich', '1983-10-24', 1, -1, NULL),
+	(3, '2021-10-21 15:02:36', NULL, NULL, NULL, 'viktor', 'gjugo', 'nihtelshtain', '1980-10-21', 1, 1, NULL),
+	(4, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Jelena', 'Kavroljuk', 'Antipovna', '1973-07-21', 2, 1, NULL),
+	(5, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-01-18', NULL, 'alek', 'levitan', 'nikolaevich', '1982-11-26', 1, 1, NULL),
+	(6, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-09-19', '2021-10-20', 'aleksej', 'lavrentjev', 'alekseevich', '1983-10-24', 1, -1, NULL),
+	(7, '2021-10-18 14:27:30', '2021-10-18 14:27:29', '2020-09-19', '2021-10-20', 'aleksej', 'lavrentjev', 'alekseevich', '1983-10-24', 1, -1, NULL),
+	(8, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Alina', 'Kavroljuk', 'Antipovna', '1973-07-21', 2, 1, NULL),
+	(9, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Alina', 'Kavroljuk', 'Antipovna', '1973-07-21', 2, 1, NULL),
+	(10, '2021-10-21 17:47:51', NULL, NULL, NULL, 'Kalina', 'Kats', 'Antipenko', '1973-07-21', 2, 1, NULL);
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
+
+-- Dumping structure for table yii2phpdb.employee_education
+CREATE TABLE IF NOT EXISTS `employee_education` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `employee_id` int(11) DEFAULT NULL,
+  `education_id` int(11) DEFAULT NULL,
+  `graduated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_employee_education_employee` (`employee_id`),
+  KEY `FK_employee_education_education_type` (`education_id`),
+  CONSTRAINT `FK_employee_education_education_type` FOREIGN KEY (`education_id`) REFERENCES `education_type` (`id`),
+  CONSTRAINT `FK_employee_education_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+
+-- Dumping data for table yii2phpdb.employee_education: ~5 rows (approximately)
+/*!40000 ALTER TABLE `employee_education` DISABLE KEYS */;
+INSERT IGNORE INTO `employee_education` (`id`, `created_at`, `employee_id`, `education_id`, `graduated_at`) VALUES
+	(4, '2021-10-22 09:35:31', 1, 7, '2001-10-22 09:35:26'),
+	(5, '2021-10-22 09:35:44', 1, 8, '2020-10-22 09:35:39'),
+	(6, '2021-10-22 09:36:02', 1, 9, '2021-10-22 09:36:01'),
+	(7, '2021-10-22 09:38:11', 5, 5, '2020-10-22 09:38:07'),
+	(8, '2021-10-22 09:38:26', 4, 7, '2011-10-22 09:38:20');
+/*!40000 ALTER TABLE `employee_education` ENABLE KEYS */;
 
 -- Dumping structure for table yii2phpdb.employee_institution
 CREATE TABLE IF NOT EXISTS `employee_institution` (
@@ -146,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `employee_institution` (
   CONSTRAINT `FK_employee_institution_institution` FOREIGN KEY (`institution_id`) REFERENCES `institution` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
--- Dumping data for table yii2phpdb.employee_institution: ~3 rows (approximately)
+-- Dumping data for table yii2phpdb.employee_institution: ~9 rows (approximately)
 /*!40000 ALTER TABLE `employee_institution` DISABLE KEYS */;
 INSERT IGNORE INTO `employee_institution` (`id`, `employee_id`, `institution_id`) VALUES
 	(1, 1, 1),
@@ -159,6 +174,32 @@ INSERT IGNORE INTO `employee_institution` (`id`, `employee_id`, `institution_id`
 	(8, 8, 2744),
 	(9, 9, 2174);
 /*!40000 ALTER TABLE `employee_institution` ENABLE KEYS */;
+
+-- Dumping structure for table yii2phpdb.employee_position
+CREATE TABLE IF NOT EXISTS `employee_position` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_id` int(11) DEFAULT NULL,
+  `position_id` int(11) DEFAULT NULL,
+  `employeed_at` datetime DEFAULT NULL,
+  `qualification_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_employee_position_employee` (`employee_id`),
+  KEY `FK_employee_position_position` (`position_id`),
+  KEY `FK_employee_position_qualification_category` (`qualification_id`),
+  CONSTRAINT `FK_employee_position_employee` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_employee_position_position` FOREIGN KEY (`position_id`) REFERENCES `position` (`id`),
+  CONSTRAINT `FK_employee_position_qualification_category` FOREIGN KEY (`qualification_id`) REFERENCES `qualification_category` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+-- Dumping data for table yii2phpdb.employee_position: ~0 rows (approximately)
+/*!40000 ALTER TABLE `employee_position` DISABLE KEYS */;
+INSERT IGNORE INTO `employee_position` (`id`, `employee_id`, `position_id`, `employeed_at`, `qualification_id`) VALUES
+	(1, 1, 1, '2020-10-22 09:59:44', 1),
+	(2, 1, 3, '2020-10-22 10:00:32', 2),
+	(3, 5, 4, '2018-10-22 10:18:26', 7),
+	(4, 3, 1, '2011-10-22 10:22:21', 1),
+	(5, 9, 2, '2011-10-22 10:28:27', 3);
+/*!40000 ALTER TABLE `employee_position` ENABLE KEYS */;
 
 -- Dumping structure for table yii2phpdb.employee_subjects
 CREATE TABLE IF NOT EXISTS `employee_subjects` (
@@ -3067,7 +3108,7 @@ CREATE TABLE IF NOT EXISTS `migration` (
   PRIMARY KEY (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table yii2phpdb.migration: ~1 rows (approximately)
+-- Dumping data for table yii2phpdb.migration: ~0 rows (approximately)
 /*!40000 ALTER TABLE `migration` DISABLE KEYS */;
 /*!40000 ALTER TABLE `migration` ENABLE KEYS */;
 

@@ -73,7 +73,7 @@ class CustomDataController extends Controller
         $query = InstitutionType::find()->asArray();
 
         if($mode !== null && !empty($mode)){
-            $query->andWhere(['mode'=>$mode]);
+            $query->andWhere(['category'=>$mode]);
         }
 
         return $this->asJson($query->all());

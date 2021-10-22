@@ -31,35 +31,63 @@ class Employee extends ExtActiveRecord
         return 'employee';
     }
 
-    public function getEducation(){
-        return $this->hasOne(EducationType::class, ['id'=>'education_id']);
+    public function getEmployeePositions(){
+
+        return $this->hasMany(EmployeePosition::class, ['employee_id'=>'id']);
     }
 
-    public function getPosition(){
-        return $this->hasOne(Position::class, ['id'=>'position_id']);
+    public function getEmployeeEducation(){
+        return $this->hasMany(EmployeeEducation::class, ['employee_id'=> 'id']);
     }
+
+    public function getLatestEducation(){
+        $education = EducationType::find()
+            ->joinWith('employeeEducation')
+            ->where(['employee_education.employee_id'=>$this->id])
+            ->orderBy(['employee_education.graduated_at'=> SORT_DESC])
+            ->one();
+
+        if($education !== null){
+            return $education->name;
+        }
+
+        return "";
+    }
+
+
     public function getQualification(){
         return $this->hasOne(QualificationCategory::class, ['id'=>'qualification_id']);
     }
-
+    public function getEducation(){
+        return $this->hasMany(EducationType::class, ['id'=>'education_id'])
+            ->viaTable('employee_education', ['employee_id'=>'id']);
+    }
     public function getSubjects(){
         return $this->hasMany(Subjects::class, ['id'=>'subject_id'])
             ->viaTable('employee_subjects', ['employee_id'=>'id']);
     }
 
     public function getStandingPeriod(){
-        $employed_at = $this->employed_at;
-        $end_date = "";
+        $positions = $this->employeePositions;
+        $years = 0;
+        $months = 0;
+        foreach($positions as $position) {
+            $employed_at = $position->employeed_at;
+            $end_date = "";
 
-        if($this->status == static::STATUS_FIRED){
-            $end_date = $this->termination_at;
+            if ($this->status == static::STATUS_FIRED) {
+                $end_date = $this->termination_at;
+            }
+
+            $firstDate = new \DateTime($employed_at);
+            $secondDate = new \DateTime($end_date);
+
+            $intvl = $firstDate->diff($secondDate);
+            $years += $intvl->y;
+            $months += $intvl->m;
         }
 
-        $firstDate  = new \DateTime($employed_at);
-        $secondDate = new \DateTime($end_date);
-
-        $intvl = $firstDate->diff($secondDate);
-        return sprintf('%d aastat ja %d kuud', $intvl->y, $intvl->m);
+        return sprintf('%d aastat ja %d kuud', $years, $months);
     }
 
     public function getSubjectsAsString(){

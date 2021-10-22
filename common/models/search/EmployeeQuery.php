@@ -2,12 +2,9 @@
 
 namespace common\models\search;
 
-use common\models\EducationType;
 use common\models\Employee;
-use common\models\Institution;
-use common\models\Position;
-use common\models\Subjects;
 use yii\data\ActiveDataProvider;
+use codeonyii\yii2validators\AtLeastValidator;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Employee]].
@@ -42,6 +39,7 @@ class EmployeeQuery extends Employee
     {
         return [
             // username and password are both required
+
             [
                 [
                     'first_name',
@@ -49,12 +47,63 @@ class EmployeeQuery extends Employee
                     'institution_name',
                     'patronymic',
                     'area',
-                    'fired_search'
+                    'fired_search',
+                    'birth_date',
+                    'birth_date_starts',
+                    'birth_date_ends',
+                    'institution_mode',
+                    'institution_type',
+                    'institution',
+                    'position_type',
+                    'address_query',
+                    'gender',
+                    'address_region',
+                    'address_province',
+                    'address_municipality',
+                    'education_level',
+                    'position'
                 ],
-                'string'
+                AtLeastValidator::className(),
+                'in'=>[
+                    'first_name',
+                    'last_name',
+                    'institution_name',
+                    'patronymic',
+                    'area',
+                    'fired_search',
+                    'birth_date',
+                    'birth_date_starts',
+                    'birth_date_ends',
+                    'institution_mode',
+                    'institution_type',
+                    'institution',
+                    'position_type',
+                    'address_query',
+                    'gender',
+                    'address_region',
+                    'address_province',
+                    'address_municipality',
+                    'education_level',
+                    'position'
+                ],
+                'message'=>'At least one field must be selected to proceed',
+                'min'=>1
             ],
-            ['birth_date', 'number', 'max' => date('Y'), 'min' => 1900],
-            [['birth_date_starts', 'birth_date_ends'], 'number', 'max' => 100, 'min' => 10],
+            [
+                [
+                    'first_name',
+                    'last_name',
+                    'institution_name',
+                    'patronymic',
+                    'area',
+
+                ],
+                'string',
+                'min'=>2,
+                'skipOnEmpty'=>true
+            ],
+            ['birth_date', 'integer', 'max' => date('Y'), 'min' => 1900],
+            [['birth_date_starts', 'birth_date_ends'], 'integer', 'max' => 100, 'min' => 10],
             [
                 [
                     'birth_date',
@@ -62,11 +111,10 @@ class EmployeeQuery extends Employee
                     'birth_date_ends',
                     'institution_mode',
                     'institution_type',
-
                     'position_type',
 
                 ],
-                'number'
+                'integer'
             ],
             [
                 [
@@ -81,7 +129,8 @@ class EmployeeQuery extends Employee
                     'address_province',
                     'address_municipality',
                     'education_level',
-                    'position'
+                    'position',
+                    'fired_search'
                 ],
                 'safe'
             ],
@@ -111,6 +160,8 @@ class EmployeeQuery extends Employee
         ];
     }
 
+
+
     /**
      * {@inheritdoc}
      * @return \common\models\Employee[]|array
@@ -131,17 +182,27 @@ class EmployeeQuery extends Employee
 
     public function search($params)
     {
-        $query = Employee::find()->distinct()->joinWith(['institution', 'position']);
+        $query = Employee::find()->distinct()->joinWith([
+            'institution',
+            'employeeEducation',
+            'employeePositions',
+            'employeePositions.position'
+        ]);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'page' =>(isset($params['page']) ? $params['page'] - 1:  0),
-                'pageSize' => (isset($params['pageSize']) ? $params['pageSize'] :  10),
+                'page' => (isset($params['page']) ? $params['page'] - 1 : 0),
+                'pageSize' => (isset($params['pageSize']) ? $params['pageSize'] : 10),
             ],
         ]);
+
+        if (is_null($params) || empty($params)) {
+            $query->where('false');
+            return $dataProvider;
+        }
 
         $dataProvider->setSort([
             'defaultOrder' => ['created_at' => SORT_DESC],
@@ -156,6 +217,9 @@ class EmployeeQuery extends Employee
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
+
+            $query->where('false');
+
             return $dataProvider;
         }
 
@@ -172,7 +236,7 @@ class EmployeeQuery extends Employee
         }
 
         if (isset($this->education_level) && !empty($this->education_level)) {
-            $query->andFilterWhere(['employee.education_id' => $this->education_level]);
+            $query->andFilterWhere(['employee_education.education_id' => $this->education_level]);
         }
 
         if (isset($this->institution_mode)) {
@@ -184,11 +248,11 @@ class EmployeeQuery extends Employee
         }
 
         if (isset($this->institution_name) && !empty($this->institution_name)) {
-            $query->andFilterWhere(['like', 'LOWER(institution.name)', strtolower($this->institution_name) ]);
+            $query->andFilterWhere(['like', 'LOWER(institution.name)', strtolower($this->institution_name)]);
         }
 
         if (isset($this->position) && !empty($this->position)) {
-            $query->andFilterWhere(['IN', 'employee.position_id', $this->position]);
+            $query->andFilterWhere(['IN', 'position.id', $this->position]);
         }
 
         if (isset($this->position_type)) {
@@ -231,7 +295,7 @@ class EmployeeQuery extends Employee
         if (isset($this->id)) {
             $query->andFilterWhere(['employee.id' => $this->id]);
         }
-       // echo $query->createCommand()->getRawSql();
+        // echo $query->createCommand()->getRawSql();
         return $dataProvider;
     }
 
@@ -256,14 +320,14 @@ class EmployeeQuery extends Employee
         }
 
         $attr_count = 0;
-            $data .= "Institution";
-            $data .= ", Haridus";
-            $data .= ", Ametikoht";
-            $data .= ", Õpetatavad õppeained";
-            $data .= ", Kvalifikatsiooni kategooria";
-            $data .= ", Pedagoogiline nimetus";
-            $data .= ", Pedagoogiline staaz";
-            $data .= ", Sünniaasta";
+        $data .= "Institution";
+        $data .= ";Haridus";
+        $data .= ";Ametikoht";
+        $data .= ";Õpetatavad õppeained";
+        $data .= ";Kvalifikatsiooni kategooria";
+        $data .= ";Pedagoogiline nimetus";
+        $data .= ";Pedagoogiline staaz";
+        $data .= ";Sünniaasta";
 
 
         $data .= "\r\n";
@@ -272,15 +336,23 @@ class EmployeeQuery extends Employee
         if (count($models) > 0) {
 
             foreach ($models as $model) {
+                $relations = $model->employeePositions;
+                $outputEducation = $qualifications = $outputPositions = "";
+                $coma = "";
+                foreach ($relations as $relation) {
+                    $outputPositions .= $coma . $relation->position->name;
+                    $qualifications .= $coma . $relation->position->name . " - " . $relation->qualification->name;
+                    $coma = ", ";
+                }
 
-                $data .=       $model->institution !== null && count($model->institution) > 0 ? $model->institution[0]->short_name  : "";
-                $data .= "," . ($model->education !== null ? $model->education->name : "");
-                $data .= "," . ($model->position !== null ? $model->position->name : "");
-                $data .= ",\"" . $model->getSubjectsAsString() . "\"";
-                $data .= "," . ($model->position !== null ? $model->position->pedagogical_name : "");
-                $data .= "," . ($model->qualification !== null ? $model->qualification->name : "");
-                $data .= "," . $model->getStandingPeriod();
-                $data .= "," . date("Y", strtotime($model->birth_date));
+                $data .= $model->institution !== null && count($model->institution) > 0 ? $model->institution[0]->short_name : "";
+                $data .= ";" . $model->getLatestEducation();
+                $data .= ";\"" . $outputPositions . "\"";
+                $data .= ";\"" . $model->getSubjectsAsString() . "\"";
+                $data .= ";\"" . $outputPositions . "\"";
+                $data .= ";\"" . $qualifications . "\"";
+                $data .= ";" . $model->getStandingPeriod();
+                $data .= ";" . date("Y", strtotime($model->birth_date));
 
                 $data .= "\r\n";
             }

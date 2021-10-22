@@ -38,9 +38,9 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => 'Search', 'url' => ['/search/index'],
             'items' => [
-                ['label' => 'Kasutajad', 'url' => '/search/index'],
-                ['label' => 'Õppeasutused', 'url' => '/search/index'],
-                ['label' => 'Töötajad', 'url' => '/search/index'],
+                ['label' => 'Kasutajad', 'url' => '/search'],
+                ['label' => 'Õppeasutused', 'url' => '/search'],
+                ['label' => 'Töötajad', 'url' => '/search'],
                 ],
             ],
 
