@@ -77,19 +77,22 @@ INSTALLATION INSTRUCTIONS
   8.1) Windows edit hosts C:\Windows\System32\drivers\etc file and add row "127.0.0.1 app.localhost"
   8.2) On apache config C:\Apache24\conf\extra\httpd-vhosts.conf add host configuration
 
-<VirtualHost *:80>
-	RewriteEngine On
-  ServerAdmin admin@app.co
-  DocumentRoot "c:/Apache24/htdocs/app"
-  ServerName app.localhost
-  ServerAlias app.localhost
-  ErrorLog "C:/Apache24/htdocs/logs/app-error.log"
-  CustomLog "C:/Apache24/logs/app-access.log" common
-</VirtualHost>
- 
+  ```
+  <VirtualHost *:80>
+    RewriteEngine On
+    ServerAdmin admin@app.co
+    DocumentRoot "c:/Apache24/htdocs/app"
+    ServerName app.localhost
+    ServerAlias app.localhost
+    ErrorLog "C:/Apache24/htdocs/logs/app-error.log"
+    CustomLog "C:/Apache24/logs/app-access.log" common
+  </VirtualHost>
+  ```
+
 you need to replace all the configuration based on your local instance
 
-8.3) Restart apache and open http://app.localhost on your host
+  8.3) Restart apache and open http://app.localhost on your host
+
 9) once server opens http://app.localhost successfully, open http://app.localhost/requirements.php and check that all requirements for the framework proper work are full filled
 10) go to root catalog, open .htaccess and remove all the commented blocks under "&lt;IfModule mod_rewrite.c &gt;" section
 11) then open command prompt and execute command "php yii migrate", and choose "Yes".
