@@ -70,12 +70,12 @@ INSTALLATION INSTRUCTIONS
 5) create MySql database "yii2appDb"
   5.1) edit your application config located "/app/environments/dev/common/config/main-local.php". Replace your MySql user and password, and host if needed
 6) then open command line and execute command "init" in root directory of the app
-  6.1) choose "development" as environment
-  6.2) accept to overwrite all configs
+  a) choose "development" as environment
+  b) accept to overwrite all configs
 7) be sure that server configuration has mod_rewrite installed and enabled
 8) if you work on local host you should create new virtual host
-  8.1) Windows edit hosts C:\Windows\System32\drivers\etc file and add row "127.0.0.1 app.localhost"
-  8.2) On apache config C:\Apache24\conf\extra\httpd-vhosts.conf add host configuration
+  a) Windows edit hosts C:\Windows\System32\drivers\etc file and add row "127.0.0.1 app.localhost"
+  b) On apache config C:\Apache24\conf\extra\httpd-vhosts.conf add host configuration
 
   ```
   <VirtualHost *:80>
@@ -88,13 +88,10 @@ INSTALLATION INSTRUCTIONS
     CustomLog "C:/Apache24/logs/app-access.log" common
   </VirtualHost>
   ```
+  d) Restart apache and open http://app.localhost on your host
 
-you need to replace all the configuration based on your local instance
-
-  8.3) Restart apache and open http://app.localhost on your host
-
-9) once server opens http://app.localhost successfully, open http://app.localhost/requirements.php and check that all requirements for the framework proper work are full filled
+9) once its done open http://app.localhost. Right after that, open http://app.localhost/requirements.php and check that all requirements for the framework proper work are full filled
 10) go to root catalog, open .htaccess and remove all the commented blocks under "&lt;IfModule mod_rewrite.c &gt;" section
 11) then open command prompt and execute command "php yii migrate", and choose "Yes".
-12) Your app is ready.
+12) Your App is ready.
 
