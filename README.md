@@ -91,5 +91,5 @@ you need to replace all the configuration based on your local instance
 
 8.3) Restart apache and open http://app.localhost on your host
 9) once server opens http://app.localhost successfully, open http://app.localhost/requirements.php and check that all requirements for the framework proper work are full filled
-10) go to root catalog, open .htaccess and remove all the commented blocks under "<IfModule mod_rewrite.c>" section
+10) go to root catalog, open .htaccess and remove all the commented blocks under "&lt;IfModule mod_rewrite.c &gt;" section
 
